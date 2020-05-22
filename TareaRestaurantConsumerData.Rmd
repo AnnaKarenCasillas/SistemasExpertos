@@ -1,0 +1,70 @@
+---
+title: "Restaurant Consumer Data R Notebook"
+output: html_notebook
+---
+```{r}
+# Curso Sistemas Inteligentes.
+####### Integrantes ##########
+# Anna Karen Casillas Garcia
+# Josue Emmanuel Gomez 
+# Luis Gonzalez
+
+#Se requiere del enlace Descargar el archivo RCData.zip y utilizar los siguientes archivos: rating_final.csv, geoplaces2.csv, chefmozcuisine.csv https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data
+
+#Cargamos el primer set de datos
+rating <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/rating_final.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+str(rating)
+head(rating)
+
+#Para este set de datos utilizaremos solo userID, placeID y rating, creando un subset
+rating <- subset(rating, select= -c(4,5))
+str(rating)
+head(rating)
+```
+```{r}
+#Cargamos Geoplaces
+geoplaces <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/geoplaces2.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+str(geoplaces)
+head(geoplaces)
+
+#Para este set de datos utilizaremos solo placeID, name, city, latitude y longitude, creando un subset
+geoplaces <- subset(geoplaces, select= c(1,5,7,2,3))
+str(geoplaces)
+head(geoplaces)
+```
+```{r}
+#Ahora Cargamos chefmozcuisine, unicamente contiene placeID y RCuisine, que son los datos que utilizaremos por lo que no eliminaremos ninguna columna
+chfcn <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/chefmozcuisine.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+str(chfcn)
+head(chfcn)
+```
+```{r}
+#Combinaremos los data sets para generar solo un data set
+combined_data <- merge(rating,geoplaces, by="placeID") # combinamos primero rating y geoplaces
+str(combined_data)
+head(combined_data)
+#por ultimo del resultado obtenido lo combinamos con chefmozcuisine
+combined_data <- merge(combined_data,chfcn, by="placeID") 
+str(combined_data)
+head(combined_data)
+combined_data[1:6,]
+```
+
+```{r}
+#Matriz de utilidad/Tabla de Contingencias:    
+UtMx <- with(combined_data, 
+             tapply(rating, list(userID,placeID), 
+            sum, default=NA) )
+
+dim(UtMx)  # dimension de UtMx
+#UtMx
+UtMx[is.na(UtMx)] <- 0
+nombres <-colnames(UtMx)
+UtMx[1:6,1:6]
+
+#aplicamos el SVD a la traspuesta:
+library(irlba)
+Msvd <- svd( t(UtMx) )  # estamos tomando la traspuesta para que las movies queden en los renglones:
+str(Msvd)  # para ver la estructura de las tres matrices: U*D*V
+           # Observa que la matriz diagonal "d" esta dada solo como un vector unidimensional.
+```
