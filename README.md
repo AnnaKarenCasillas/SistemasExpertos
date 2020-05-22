@@ -3,7 +3,9 @@
 Tarea: Sistemas de Recomendación
             
  La siguiente Tarea se puede hacer de manera individual o en equipos de máximo 3 integrantes.
+
  Esta Tarea requieres descargar la siguiente información:
+
   o De la siguiente liga de la UCI, debes descargar el archivo RCdata.zip y utilizar lossiguientes archivos y variables:
      rating_final.csv : Usar únicamente las variables userID, placeID y rating.
      geoplaces2.csv : Usar las variables placeID, name, city, latitude y longitude.
