@@ -12,7 +12,7 @@ output: html_notebook
 #Se requiere del enlace Descargar el archivo RCData.zip y utilizar los siguientes archivos: rating_final.csv, geoplaces2.csv, chefmozcuisine.csv https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data
 
 #Cargamos el primer set de datos
-rating <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/rating_final.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+rating <- read.delim("/Users/akcasill/Documents/Maestria/SistemasExpertos/RCdata/rating_final.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
 str(rating)
 head(rating)
 
@@ -23,7 +23,7 @@ head(rating)
 ```
 ```{r}
 #Cargamos Geoplaces
-geoplaces <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/geoplaces2.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+geoplaces <- read.delim("/Users/akcasill/Documents/Maestria/SistemasExpertos/RCdata/geoplaces2.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
 str(geoplaces)
 head(geoplaces)
 
@@ -34,7 +34,7 @@ head(geoplaces)
 ```
 ```{r}
 #Ahora Cargamos chefmozcuisine, unicamente contiene placeID y RCuisine, que son los datos que utilizaremos por lo que no eliminaremos ninguna columna
-chfcn <- read.delim("/Users/akcasill/Documents/Maestria/RCdata/chefmozcuisine.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+chfcn <- read.delim("/Users/akcasill/Documents/Maestria/SistemasExpertos/RCdata/chefmozcuisine.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
 str(chfcn)
 head(chfcn)
 ```
