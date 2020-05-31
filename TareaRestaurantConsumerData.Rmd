@@ -111,11 +111,20 @@ sum(comds$city=="?")
 ## 4) Si consideramos la popularidad de un lugar como aquellos que tienen la mayor cantidad de evaluaciones por parte de los usiarios (independientemente de si fue positiva o negativa la evaluación), obtener los nombres de los 10 restaurantes más evaluados/populares. ¿Cuántos restaurantes difernetes hay en total?
 
 ```{r}
-tapply(comds$rating, comds$name , summary)
+restByRating <- aggregate(comds$rating, by=list(Rest=comds$name), FUN=sum)[order(comds$rating),]
+names(restByRating)[2] <- "SumRating"
+restByRating <- restByRating[order(restByRating$SumRating,decreasing = TRUE),]
+head(restByRating, n=10)
+
+```
+
+```{r}
+dim(restByRating )
 ```
 
 
 ## 5) ¿De qué tipo de comida/cocina son los 10 restaurantes más populares encontrados en el inciso anterior? ¿Cuántos tipos de cocina diferentes hay en total?
+
 
 
 ## 6) Generar la matriz de Utilidad considerando los renglones con la variable userID, las columnas con placeID, y los valores de la matriz con rating. A partir de dicha matriz de utilidad aplicar la factorización SVD (Singular Value Decomposition) para obtener la matriz de variables latentes para los restaurantes.
