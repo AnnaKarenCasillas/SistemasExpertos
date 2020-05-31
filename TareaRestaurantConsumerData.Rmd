@@ -69,9 +69,51 @@ combined_data[1:6,]
 ```
 ## 2) Realizar una análisis descriptivo de las variables e indica si existen datos perdidos en algunas de ellas. De ser así, realiza un análisis para determinar y justificar la decisión que tomes sobre dichos datos perdidos. Para el caso de los datos perdidos de la variable city, puedes investigar al menos los paquetes “revgeo” o “ggmap” de R, para recuperar el nombre de la ciudad con la latitud y longitud.
 
+```{r}
+comds <- combined_data
+str(comds)
+```
+* placeID y userID son variables de identificación, por lo tanto únicas así que ambas son categoricas
+* Nombre y Ciudad son así mismo variables categoricas, únicas
+* Rating es una variable númerica
+* latitude y longitude, aunque n´´úmericas son parte de una dirección
+** En nuestra opinión las más útiles son rating y tipo de cocina (Rcuisine), siendo raiting númerica y Rcuisine categorica **
+
+
+```{r}
+sum(is.na(comds))
+```
+### No se muestran "NA" en el set de datos
+
+#### Veamos la distribución de opiniones
+
+```{r}
+hist(comds$rating, col = 'skyblue3', breaks = 3)
+```
+
 ## 3) ¿De qué ciudades son los restaurantes del estudio?
+#### Ciudades
+```{r}
+levels( comds$city )
+```
+
+```{r}
+barplot(prop.table(table(comds$city)), col = 'skyblue3')
+```
+```{r}
+sum(comds$city=="?")
+```
+### A pesar de no tener NAs tenemos 89 ciudades desconocidas
+
+# TBD: Para el caso de los datos perdidos de la variable city, puedes investigar al menos los paquetes “revgeo” o “ggmap” de R, para recuperar el nombre de la ciudad con la latitud y longitud.
+
 
 ## 4) Si consideramos la popularidad de un lugar como aquellos que tienen la mayor cantidad de evaluaciones por parte de los usiarios (independientemente de si fue positiva o negativa la evaluación), obtener los nombres de los 10 restaurantes más evaluados/populares. ¿Cuántos restaurantes difernetes hay en total?
+
+```{r}
+tapply(comds$rating, comds$name , summary)
+```
+
 
 ## 5) ¿De qué tipo de comida/cocina son los 10 restaurantes más populares encontrados en el inciso anterior? ¿Cuántos tipos de cocina diferentes hay en total?
 
