@@ -50,7 +50,7 @@ chfcn <- read.delim("RCdata/chefmozcuisine.csv", sep = ",", stringsAsFactors = T
 str(chfcn)
 head(chfcn)
 ```
-
+## Punto 1) De los archivos anteriores generar un solo data frame que contenga todas las variables indicadas al inicio.
 
 ```{r}
 #Combinaremos los data sets para generar solo un data set
