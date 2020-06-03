@@ -5,9 +5,9 @@ output: html_notebook
 ```{r}
 # Curso Sistemas Inteligentes.
 ####### Integrantes ##########
-# Anna Karen Casillas Garcia
-# Josue Emmanuel Gomez 
-# Luis Gonzalez
+# A00354512 Anna Karen Casillas Garcia
+# A00354512 Josue Emmanuel Gomez Carrillo
+# A00540988 Luis Francico Gonzalez Rodriguez
 
 #Se requiere del enlace Descargar el archivo RCData.zip y utilizar los siguientes archivos: rating_final.csv, geoplaces2.csv, chefmozcuisine.csv https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data
 ```
@@ -125,6 +125,25 @@ dim(restByRating )
 
 ## 5) ¿De qué tipo de comida/cocina son los 10 restaurantes más populares encontrados en el inciso anterior? ¿Cuántos tipos de cocina diferentes hay en total?
 
+```{r}
+restByRating <- aggregate(comds$rating, by=list(Id=comds$placeID,Rest=comds$name), FUN=sum)[order(comds$rating),]
+names(restByRating)[3] <- "SumRating"
+restByRating <- restByRating[order(restByRating$SumRating,decreasing = TRUE),]
+head(restByRating, n=10)
+```
+
+##Tipos distintos de cocina: 8 y un NA
+
+```{r}
+
+out <- subset(comds, placeID %in% c(135032, 135052,135085,132825,135041,135030,135026,135053,132834,135025))
+agg <- aggregate(out$placeID, by=list(TiposCocina=out$Rcuisine), FUN=mean)[order(out$placeID),]
+agg <- agg[ -c(2)]
+totalTipos <- unique(agg$TiposCocina)
+length(totalTipos)
+head(agg,9)
+
+```
 
 
 ## 6) Generar la matriz de Utilidad considerando los renglones con la variable userID, las columnas con placeID, y los valores de la matriz con rating. A partir de dicha matriz de utilidad aplicar la factorización SVD (Singular Value Decomposition) para obtener la matriz de variables latentes para los restaurantes.
