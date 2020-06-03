@@ -234,22 +234,50 @@ head(agg, 8)
 ```{r}
 library(Matrix)
 #Matriz de utilidad/Tabla de Contingencias:    
-UtMx <- with(combined_data, 
+UtMx <- with(comds, 
              tapply(rating, list(userID,placeID), 
             sum, default=NA) )
 
-dim(UtMx)  # dimension de UtMx
+dim(UtMx)  # dimension de UtMx 138 usuarios y 95 placesID
 #UtMx
-UtMx[is.na(UtMx)] <- 0
-nombres <-colnames(UtMx)
+UtMx[is.na(UtMx)] <- 0 # como tiene muchas entradas NA las convetimos a 0s para matematicamente poder ser manipuladas
+nombres <-colnames(UtMx) # guardamos el vector de nombres para facil acceso
 UtMx[1:6,1:6]
 ```
-
+```{r}
+#aplicamos el SVD a la traspuesta a la matriz de utlidad:
+library(irlba)
+Msvd <- svd( t(UtMx) )  # estamos tomando la traspuesta para que los placesIDs queden en los renglones y calculamos la SVD
+str(Msvd)  # para ver la estructura de las tres matrices: U*D*V
+           # se Observa que la matriz diagonal "d" esta dada solo como un vector unidimensional.
+```
 ## 7) Si a un usuario le gustó el restaurante “Gorditas Doña Gloria” con placeID: 132834, ¿Qué otros 12 restaurantes (indicar los nombres) le podrías recomendar usando la descomposición SVD con el método de correlación de “pearson” y considerando los 10 valores singulares más grandes de la SVD? Nota: no importa por el momento de qué ciudad sea el restaurante.
 ```{r}
-#aplicamos el SVD a la traspuesta:
-library(irlba)
-Msvd <- svd( t(UtMx) )  # estamos tomando la traspuesta para que las movies queden en los renglones:
-str(Msvd)  # para ver la estructura de las tres matrices: U*D*V
-           # Observa que la matriz diagonal "d" esta dada solo como un vector unidimensional.
+#Recomendacion con Matriz de correlacion y SVD-TRUNCADO:
+utrunc <- Msvd$u[,1:10]
+
+corr_mx <- cor( t(utrunc), use="pairwise.complete.obs", method = "pearson") 
+#corr_mx
+
+dim(corr_mx)
+
+# Seleccionamos a "Gorditas Doña Gloria":
+placeId <- "132834"
+#str(nombres) 
+placeIndex <- match(c(placeId),nombres) # obtenemos el index de este placeID en nombres que guardamos previamente
+str(placeIndex) #index obtenido
+
+mis_recomendaciones <- corr_mx[,placeIndex] # obtenemos las recomentaciones con base a el place ID
+#mis_recomendaciones
+
+# Seleccionemos aquellas correlaciones altas:
+tops <- which(mis_recomendaciones[]>0.5 & mis_recomendaciones[] < 1.0, arr.ind = TRUE) 
+#nombres[tops]
+#mis_recomendaciones[tops]
+top_recomendaciones <- cbind(mis_recomendaciones[tops], nombres[tops])
+top_recomendaciones
 ```
+```{r}
+comds$name[which(comds$placeID == top_recomendaciones[,2])] 
+```
+
