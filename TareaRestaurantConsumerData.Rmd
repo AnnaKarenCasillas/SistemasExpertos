@@ -31,7 +31,7 @@ head(rating)
 
 ```{r}
 #Cargamos Geoplaces
-geoplaces <- read.delim("RCdata/geoplaces2.csv", sep = ",", stringsAsFactors = TRUE, header=TRUE)
+geoplaces <- read.delim("RCdata/geoplaces2.csv", sep = ",", stringsAsFactors = FALSE, header=TRUE)
 str(geoplaces)
 head(geoplaces)
 ```
@@ -73,6 +73,10 @@ combined_data[1:6,]
 comds <- combined_data
 str(comds)
 ```
+
+
+
+
 * placeID y userID son variables de identificación, por lo tanto únicas así que ambas son categoricas
 * Nombre y Ciudad son así mismo variables categoricas, únicas
 * Rating es una variable númerica
@@ -90,6 +94,65 @@ sum(is.na(comds))
 ```{r}
 hist(comds$rating, col = 'skyblue3', breaks = 3)
 ```
+### Número total de regitros sin ciudad
+
+```{r}
+sum(comds$city=="?")
+```
+
+### Buscamos ciudades para los registros que no tienen o están marcados con "?"
+
+```{r}
+#install.packages("revgeo")
+#install.packages("dplyr") 
+library(revgeo)                                   
+library(dplyr) 
+
+latlong <-subset(comds,comds$city == "?",select=placeID:longitude,stringsAsFactors=FALSE)
+latlong
+
+#cities <- revgeo(latlong$longitude, latlong$latitude,  output = 'frame')
+#cities
+
+
+#comds$city = ciesties$city where comds$placeID = cities$placeID
+for(i in 1:nrow(latlong)) {
+    row <- latlong[i,]
+    print("Searching city, row:")
+    print(row$city)
+    cities <- revgeo(row$longitude, row$latitude,  output = 'hash', item ='city')
+    print("Setting City Found:")
+    print(cities)
+    comds$city[which(comds$placeID == row$placeID)] <- as.character(cities)
+    print("Latlong new city:")
+    #latlong$city[i] <- cities$city
+    # do stuff with row
+}
+
+latlong
+
+```
+
+
+### Corroboramos que ya no hay regitros sin ciudad
+
+```{r}
+sum(comds$city=="?")
+
+```
+###Corroboramos que no hay registros sin valor NA
+```{r}
+#sum(is.na(latlong))
+sum(is.na(comds))
+```
+
+
+```{r}
+#Volver Categórica la columna city
+comds$city = as.factor(comds$city)
+```
+
+
 
 ## 3) ¿De qué ciudades son los restaurantes del estudio?
 #### Ciudades
@@ -100,6 +163,35 @@ levels( comds$city )
 ```{r}
 barplot(prop.table(table(comds$city)), col = 'skyblue3')
 ```
+### Vamos a agrupar las ciudades repetidas 
+
+```{r}
+lev <- with(comds, levels(city))
+lev[lev=="Cd Victoria"] <- "Ciudad Victoria"
+lev[lev=="Cd Victoria "] <- "Ciudad Victoria"
+lev[lev=="Cd. Victoria"] <- "Ciudad Victoria"
+lev[lev=="victoria "] <- "Ciudad Victoria"
+lev[lev=="victoria"] <- "Ciudad Victoria"
+lev[lev=="cuernavaca "] <- "Cuernavaca"
+lev[lev=="cuernavaca"] <- "Cuernavaca"
+lev[lev=="san luis potos"] <- "San Luis Potosí"
+lev[lev=="slp"] <- "San Luis Potosí"
+lev[lev=="s.l.p"] <- "San Luis Potosí"
+lev[lev=="san luis potosi"] <- "San Luis Potosí"
+lev[lev=="san luis potosi "] <- "San Luis Potosí"
+lev[lev=="s.l.p."] <- "San Luis Potosí"
+lev[lev=="San Luis Potosi"] <- "San Luis Potosí"
+
+comds <- within(comds, levels(city) <- lev)
+levels(comds$city)
+```
+
+###Volvemos a imprimir las ciudades
+
+```{r}
+barplot(prop.table(table(comds$city)), col = 'skyblue3')
+```
+### Número total de regitros sin ciudad
 ```{r}
 sum(comds$city=="?")
 ```
@@ -114,7 +206,8 @@ sum(comds$city=="?")
 restByRating <- aggregate(comds$rating, by=list(Rest=comds$name), FUN=sum)[order(comds$rating),]
 names(restByRating)[2] <- "SumRating"
 restByRating <- restByRating[order(restByRating$SumRating,decreasing = TRUE),]
-head(restByRating, n=10)
+restByRating
+#head(restByRating)
 
 ```
 
@@ -132,16 +225,19 @@ restByRating <- restByRating[order(restByRating$SumRating,decreasing = TRUE),]
 head(restByRating, n=10)
 ```
 
-##Tipos distintos de cocina: 8 y un NA
+##Tipos distintos de cocina: 8
 
 ```{r}
 
 out <- subset(comds, placeID %in% c(135032, 135052,135085,132825,135041,135030,135026,135053,132834,135025))
 agg <- aggregate(out$placeID, by=list(TiposCocina=out$Rcuisine), FUN=mean)[order(out$placeID),]
 agg <- agg[ -c(2)]
+
+agg <- na.omit(agg)
+
 totalTipos <- unique(agg$TiposCocina)
 length(totalTipos)
-head(agg,9)
+head(agg, 8)
 
 ```
 
