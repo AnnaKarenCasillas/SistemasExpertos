@@ -278,10 +278,8 @@ top_recomendaciones <- cbind(mis_recomendaciones[tops], nombres[tops])
 top_recomendaciones
 ```
 ```{r}
-DF2 = as.data.frame(top_recomendaciones)
-Resultado <- subset(comds, placeID %in% DF2$V2) 
-
-recomend <- unique(Resultado$name)
+result <- subset(comds, placeID %in% top_recomendaciones[,2]) 
+recomend <- unique(result$name)
 paste(c("Te recomendamos los 10 siguientes lugares cerca de tí:", recomend))
 ```
 
