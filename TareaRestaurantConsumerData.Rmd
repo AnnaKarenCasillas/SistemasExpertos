@@ -117,7 +117,7 @@ barplot(prop.table(table(comds$Rcuisine)), col = 'skyblue3')
 sum(comds$city=="?")
 ```
 
-### Buscamos ciudades para los registros que no tienen o están marcados con "?"
+### Mediante el uso de REVGEO buscamos el nombre de las ciudades para los registros que no tienen o están marcados con "?"
 
 ```{r}
 #install.packages("revgeo")
@@ -142,13 +142,13 @@ comds
 ```
 
 
-### Corroboramos que ya no hay regitros sin ciudad
+### Corroboramos que ya no hay regitros sin ciudad o con valor = '?'
 
 ```{r}
 sum(comds$city=="?")
 
 ```
-###Corroboramos que no hay registros sin valor NA
+### Corroboramos que no hay registros sin valor (NA)
 ```{r}
 #sum(is.na(latlong))
 sum(is.na(comds))
@@ -163,7 +163,8 @@ comds$city = as.factor(comds$city)
 
 
 ## 3) ¿De qué ciudades son los restaurantes del estudio?
-#### Ciudades
+
+#### Ciudades de los restaurantes del estudio:
 ```{r}
 levels( comds$city )
 ```
@@ -171,7 +172,7 @@ levels( comds$city )
 ```{r}
 barplot(prop.table(table(comds$city)), col = 'skyblue3')
 ```
-### Vamos a agrupar las ciudades repetidas 
+#### Vamos a agrupar las ciudades por un nombre en común. 
 
 ```{r}
 lev <- with(comds, levels(city))
@@ -194,12 +195,12 @@ comds <- within(comds, levels(city) <- lev)
 levels(comds$city)
 ```
 
-###Volvemos a imprimir las ciudades
+### Volvemos a imprimir las ciudades, para corroborar el nuevo agrupamiento.
 
 ```{r}
 barplot(prop.table(table(comds$city)), col = 'skyblue3')
 ```
-### Número total de regitros sin ciudad
+### Número total de regitros sin ciudad, o el campo en '?'
 ```{r}
 sum(comds$city=="?")
 ```
@@ -222,6 +223,7 @@ dim(restByRating )
 
 ## 5) ¿De qué tipo de comida/cocina son los 10 restaurantes más populares encontrados en el inciso anterior? ¿Cuántos tipos de cocina diferentes hay en total?
 
+### Usaremos el ID de cada restaurant (placeID) para encontrar su tipo de comida
 ```{r}
 restByRating <- aggregate(comds$rating, by=list(Id=comds$placeID,Rest=comds$name), FUN=sum)[order(comds$rating),]
 names(restByRating)[3] <- "SumRating"
@@ -229,7 +231,7 @@ restByRating <- restByRating[order(restByRating$SumRating,decreasing = TRUE),]
 head(restByRating, n=10)
 ```
 
-##Tipos distintos de cocina: 8
+### Tipos distintos de cocina: 8
 
 ```{r}
 
@@ -288,15 +290,17 @@ mis_recomendaciones <- corr_mx[,placeIndex] # obtenemos las recomentaciones con 
 #mis_recomendaciones
 
 # Seleccionemos aquellas correlaciones altas:
-tops <- which(mis_recomendaciones[]>0.5 & mis_recomendaciones[] < 1.0, arr.ind = TRUE) 
+tops <- which(mis_recomendaciones[]>0.42 & mis_recomendaciones[] < 1.0, arr.ind = TRUE) 
 #nombres[tops]
 #mis_recomendaciones[tops]
 top_recomendaciones <- cbind(mis_recomendaciones[tops], nombres[tops])
 top_recomendaciones
 ```
+
+### Recomendación de lugares para los usuarios que les gustó el restaurante "Gorditas Doña Gloria"
 ```{r}
 result <- subset(comds, placeID %in% top_recomendaciones[,2]) 
 recomend <- unique(result$name)
-paste(c("Te recomendamos los 10 siguientes lugares cerca de tí:", recomend))
+paste(c("Te recomendamos los 12 siguientes lugares cerca de tí:", recomend))
 ```
 
