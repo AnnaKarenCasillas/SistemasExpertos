@@ -74,14 +74,17 @@ comds <- combined_data
 str(comds)
 ```
 
-
-
-
 * placeID y userID son variables de identificación, por lo tanto únicas así que ambas son categoricas
 * Nombre y Ciudad son así mismo variables categoricas, únicas
 * Rating es una variable númerica
 * latitude y longitude, aunque n´´úmericas son parte de una dirección
 ** En nuestra opinión las más útiles son rating y tipo de cocina (Rcuisine), siendo raiting númerica y Rcuisine categorica **
+
+### Distribución place ID
+
+```{r}
+hist(comds$placeID, col = 'skyblue3', breaks = 3)
+```
 
 
 ```{r}
@@ -94,6 +97,20 @@ sum(is.na(comds))
 ```{r}
 hist(comds$rating, col = 'skyblue3', breaks = 3)
 ```
+```{r}
+boxplot(comds$rating, col = 'skyblue3')
+```
+
+### Usuarios (opiniones)
+```{r}
+barplot(prop.table(table(comds$userID)), col = 'skyblue3')
+```
+### Distribución por tipo de comida
+```{r}
+barplot(prop.table(table(comds$Rcuisine)), col = 'skyblue3')
+```
+
+
 ### Número total de regitros sin ciudad
 
 ```{r}
